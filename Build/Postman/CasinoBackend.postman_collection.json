@@ -1,0 +1,2088 @@
+{
+	"info": {
+		"_postman_id": "casino-backend-collection",
+		"name": "Casino Backend API - Complete",
+		"description": "Complete API collection for Casino Backend with all latest features including session management, notifications, and game functionality",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "PostmanRuntime/7.32.3"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\",\n    \"username\": \"newuser\",\n    \"role\": \"player\",\n    \"cashierId\": null,\n    \"bio\": \"New player\",\n    \"avatarUrl\": \"https://example.com/avatar.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "register"]
+						},
+						"description": "Register a new user with automatic login and session creation"
+					}
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "PostmanRuntime/7.32.3"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "login"]
+						},
+						"description": "Login with session management. Response includes session info if user was logged in on another device."
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "logout"]
+						},
+						"description": "Logout and invalidate session + token"
+					}
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"oldPassword\": \"currentpassword123\",\n    \"newPassword\": \"newpassword123\",\n    \"confirmPassword\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/change-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "change-password"]
+						},
+						"description": "Change user password (requires old password verification)"
+					}
+				},
+				{
+					"name": "Reset Password (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{userId}}\",\n    \"defaultPassword\": \"DefaultPass123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/reset-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "reset-password"]
+						},
+						"description": "Reset user password (Admin only - no old password required)"
+					}
+				}
+			]
+		},
+		{
+			"name": "Session Management",
+			"item": [
+				{
+					"name": "Connect to Session Hub",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/session/connect",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "session", "connect"]
+						},
+						"description": "Initialize connection to session management"
+					}
+				},
+				{
+					"name": "Disconnect from Session Hub",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/session/disconnect",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "session", "disconnect"]
+						},
+						"description": "Disconnect from session management"
+					}
+				},
+				{
+					"name": "Check User Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{userId}}\",\n    \"sessionId\": \"{{sessionId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/check-session",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "check-session"]
+						},
+						"description": "Check if the user's session is still valid. Send the sessionId from login response in the request body. Returns a forced logout message if the session is expired or replaced."
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "profile"]
+						},
+						"description": "Get current user profile"
+					}
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"updatedusername\",\n    \"email\": \"updated@example.com\",\n    \"bio\": \"Updated bio\",\n    \"avatarUrl\": \"https://example.com/updated-avatar.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "profile"]
+						},
+						"description": "Update user profile"
+					}
+				},
+				{
+					"name": "Get All Users (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users"]
+						},
+						"description": "Get all users (Admin only)"
+					}
+				},
+				{
+					"name": "Get Users for Selection (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/for-selection?searchTerm=john&role=player",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "for-selection"],
+							"query": [
+								{
+									"key": "searchTerm",
+									"value": "john",
+									"description": "Search by username, email, or user game ID"
+								},
+								{
+									"key": "role",
+									"value": "player",
+									"description": "Filter by user role (optional)"
+								}
+							]
+						},
+						"description": "Get users for selection in notifications (Admin only) - supports search and role filtering"
+					}
+				},
+				{
+					"name": "Get Leaderboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/leaderboard",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "leaderboard"]
+						},
+						"description": "Get global leaderboard"
+					}
+				},
+				{
+					"name": "Get All Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications"]
+						},
+						"description": "Get all active notifications for current user"
+					}
+				},
+				{
+					"name": "Get Notifications by Type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications/{{notificationType}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications", "{{notificationType}}"]
+						},
+						"description": "Get all active notifications of a specific type (e.g., session, achievement, reward)"
+					}
+				},
+				{
+					"name": "Get Latest Notification by Type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications/{{notificationType}}/latest",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications", "{{notificationType}}", "latest"]
+						},
+						"description": "Get the latest active notification of a specific type"
+					}
+				},
+				{
+					"name": "Create Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Welcome Back!\",\n    \"message\": \"You have successfully logged in from a new device.\",\n    \"notificationType\": \"session\",\n    \"expiresAt\": \"2024-01-15T10:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications"]
+						},
+						"description": "Create a new notification for current user"
+					}
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications/{{notificationId}}/mark-read",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications", "{{notificationId}}", "mark-read"]
+						},
+						"description": "Mark a specific notification as read"
+					}
+				},
+				{
+					"name": "Create Session Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"New Device Login\",\n    \"message\": \"Your account has been logged in from a new device. Previous login: 2024-01-10 15:30:00 from Chrome on Windows\",\n    \"notificationType\": \"session\",\n    \"expiresAt\": \"2024-01-15T10:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications"]
+						},
+						"description": "Create a session notification (automatically created on new device login)"
+					}
+				},
+				{
+					"name": "Create Achievement Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Achievement Unlocked!\",\n    \"message\": \"Congratulations! You've unlocked the 'High Roller' achievement!\",\n    \"notificationType\": \"achievement\",\n    \"expiresAt\": \"2024-01-20T23:59:59Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications"]
+						},
+						"description": "Create an achievement notification"
+					}
+				},
+				{
+					"name": "Create Reward Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Daily Bonus!\",\n    \"message\": \"You've received a daily bonus of 1000 coins!\",\n    \"notificationType\": \"reward\",\n    \"expiresAt\": \"2024-01-15T23:59:59Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications"]
+						},
+						"description": "Create a reward notification"
+					}
+				},
+				{
+					"name": "Create Tournament Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Tournament Starting Soon!\",\n    \"message\": \"New tournament starting in 1 hour! Join now for a chance to win big!\",\n    \"notificationType\": \"tournament\",\n    \"expiresAt\": \"2024-01-20T23:59:59Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications"]
+						},
+						"description": "Create a tournament notification"
+					}
+				},
+				{
+					"name": "Get Game Leaderboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/game-leaderboard/{{gameId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "game-leaderboard", "{{gameId}}"]
+						},
+						"description": "Get leaderboard for specific game"
+					}
+				},
+				{
+					"name": "Get Weekly Leaderboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/weekly-leaderboard",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "weekly-leaderboard"]
+						},
+						"description": "Get weekly leaderboard (auto-generated every Monday using user coin balances)"
+					}
+				},
+				{
+					"name": "Get Weekly Leaderboard by Date",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/weekly-leaderboard/{{weekStartDate}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "weekly-leaderboard", "{{weekStartDate}}"]
+						},
+						"description": "Get weekly leaderboard for specific week (format: YYYY-MM-DD)"
+					}
+				},
+
+				{
+					"name": "Get Daily Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/daily-stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "daily-stats"]
+						},
+						"description": "Get user's daily statistics"
+					}
+				},
+				{
+					"name": "Get Win History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/win-history",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "win-history"]
+						},
+						"description": "Get user's win history"
+					}
+				},
+				{
+					"name": "Reset Password (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{userId}}\",\n    \"newPassword\": \"newPassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/reset-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "reset-password"]
+						},
+						"description": "Reset user password (Admin only)"
+					}
+				}
+			]
+		},
+		{
+			"name": "Games",
+			"item": [
+				{
+					"name": "Get All Games",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/games",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "games"]
+						},
+						"description": "Get all available games"
+					}
+				},
+				{
+					"name": "Get Game by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/games/{{gameId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "games", "{{gameId}}"]
+						},
+						"description": "Get game details by ID"
+					}
+				}
+			]
+		},
+		{
+			"name": "Slot Games",
+			"item": [
+				{
+					"name": "Spin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"requestId\": \"{{$guid}}\",\n    \"betAmount\": 100,\n    \"gameId\": \"{{gameId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/slot/spin",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "slot", "spin"]
+						},
+						"description": "Spin the slot machine with win ratio from game configuration"
+					}
+				},
+				{
+					"name": "Simulate Spins",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gameId\": \"{{gameId}}\",\n    \"betAmount\": 100,\n    \"numSpins\": 1000\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/slot/simulate",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "slot", "simulate"]
+						},
+						"description": "Simulate multiple spins and get RTP analysis"
+					}
+				},
+				{
+					"name": "Test Win Ratio",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gameId\": \"{{gameId}}\",\n    \"betAmount\": 100,\n    \"numSpins\": 100,\n    \"overrideWinRatio\": 0.7\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/slot/test-win-ratio",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "slot", "test-win-ratio"]
+						},
+						"description": "Test different win ratios without changing game configuration"
+					}
+				},
+				{
+					"name": "Update Win Ratio",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gameId\": \"{{gameId}}\",\n    \"winRatio\": 0.6\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/slot/update-win-ratio",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "slot", "update-win-ratio"]
+						},
+						"description": "Update the win ratio for a game (0.0 to 1.0)"
+					}
+				},
+				{
+					"name": "Get Simulation Records",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/slot/simulation-records?gameId={{gameId}}&simulationType=standard&page=1&pageSize=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "slot", "simulation-records"],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}",
+									"description": "Filter by game ID"
+								},
+								{
+									"key": "simulationType",
+									"value": "standard",
+									"description": "Filter by simulation type (standard, test, override)"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "pageSize",
+									"value": "20",
+									"description": "Number of records per page"
+								}
+							]
+						},
+						"description": "Get paginated list of simulation records with optional filters"
+					}
+				},
+				{
+					"name": "Get Simulation Record by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/slot/simulation-records/{{simulationRecordId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "slot", "simulation-records", "{{simulationRecordId}}"]
+						},
+						"description": "Get detailed information about a specific simulation record"
+					}
+				},
+				{
+					"name": "Spin Cleopatra",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gameId\": \"{{cleopatraGameId}}\",\n    \"betAmount\": 100\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/slot/cleopatra/spin",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "slot", "cleopatra", "spin"]
+						},
+						"description": "Spin the Cleopatra slot machine. Requires Authorization. Body: { gameId, betAmount, [winRatio] }"
+					}
+				}
+			]
+		},
+		{
+			"name": "Game Sessions",
+			"item": [
+				{
+					"name": "Start Game Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gameId\": \"{{gameId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/game-sessions/start",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "game-sessions", "start"]
+						},
+						"description": "Start a new game session"
+					}
+				},
+				{
+					"name": "End Game Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"coinsWon\": 100,\n    \"coinsLost\": 50\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/game-sessions/{{sessionId}}/end",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "game-sessions", "{{sessionId}}", "end"]
+						},
+						"description": "End a game session"
+					}
+				},
+				{
+					"name": "Get Current Session",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/game-sessions/current",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "game-sessions", "current"]
+						},
+						"description": "Get current active game session"
+					}
+				}
+			]
+		},
+		{
+			"name": "Game Progress",
+			"item": [
+				{
+					"name": "Get Game Progress",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/gameprogress/{{gameId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "gameprogress", "{{gameId}}"]
+						},
+						"description": "Get user's progress for a specific game"
+					}
+				},
+				{
+					"name": "Update Game Progress",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"state\": {},\n    \"totalPlaytime\": 3600,\n    \"favorite\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/gameprogress/{{gameId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "gameprogress", "{{gameId}}"]
+						},
+						"description": "Update user's progress for a specific game"
+					}
+				},
+				{
+					"name": "Unlock Achievement",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"achievementId\": \"{{achievementId}}\",\n    \"gameId\": \"{{gameId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/gameprogress/achievements/unlock",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "gameprogress", "achievements", "unlock"]
+						},
+						"description": "Unlock an achievement"
+					}
+				},
+				{
+					"name": "Get User Achievements",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/gameprogress/achievements",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "gameprogress", "achievements"]
+						},
+						"description": "Get user's achievements"
+					}
+				}
+			]
+		},
+		{
+			"name": "Achievements",
+			"item": [
+				{
+					"name": "Get All Achievements",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/achievements",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "achievements"]
+						},
+						"description": "Get all available achievements"
+					}
+				},
+				{
+					"name": "Get User Achievements",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/achievements/user",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "achievements", "user"]
+						},
+						"description": "Get current user's achievements"
+					}
+				}
+			]
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "Get All Events",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/event",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "event"]
+						},
+						"description": "Get all events"
+					}
+				},
+				{
+					"name": "Get Active Events",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/event/active",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "event", "active"]
+						},
+						"description": "Get all active events"
+					}
+				},
+				{
+					"name": "Get Event by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/event/{{eventId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "event", "{{eventId}}"]
+						},
+						"description": "Get event by ID"
+					}
+				},
+				{
+					"name": "Create Event (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"New Event\",\n    \"description\": \"Event Description\",\n    \"imageUrl\": \"https://example.com/image.jpg\",\n    \"startTime\": \"2024-03-20T10:00:00Z\",\n    \"endTime\": \"2024-03-21T10:00:00Z\",\n    \"isActive\": true,\n    \"priority\": 1,\n    \"eventBottom\": \"Event bottom text\",\n    \"showOnce\": false,\n    \"targetType\": \"player\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/event",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "event"]
+						},
+						"description": "Create new event (Admin only)"
+					}
+				},
+				{
+					"name": "Update Event (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Event\",\n    \"description\": \"Updated Description\",\n    \"imageUrl\": \"https://example.com/updated-image.jpg\",\n    \"startTime\": \"2024-03-20T10:00:00Z\",\n    \"endTime\": \"2024-03-21T10:00:00Z\",\n    \"isActive\": true,\n    \"priority\": 2,\n    \"eventBottom\": \"Updated bottom text\",\n    \"showOnce\": true,\n    \"targetType\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/event/{{eventId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "event", "{{eventId}}"]
+						},
+						"description": "Update existing event (Admin only)"
+					}
+				},
+				{
+					"name": "Delete Event (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/event/{{eventId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "event", "{{eventId}}"]
+						},
+						"description": "Delete event (Admin only)"
+					}
+				}
+			]
+		},
+		{
+			"name": "Spin Wheel",
+			"item": [
+				{
+					"name": "Get Spin Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/spinwheel/status",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "spinwheel", "status"]
+						},
+						"description": "Get spin wheel status for current user"
+					}
+				},
+				{
+					"name": "Spin Wheel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/spinwheel/spin",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "spinwheel", "spin"]
+						},
+						"description": "Spin the wheel and get reward"
+					}
+				},
+				{
+					"name": "Get Spin History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/spinwheel/history",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "spinwheel", "history"]
+						},
+						"description": "Get user's spin wheel history"
+					}
+				}
+			]
+		},
+		{
+			"name": "Daily Rewards",
+			"item": [
+				{
+					"name": "Get Daily Reward Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/daily-rewards/status",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "daily-rewards", "status"]
+						},
+						"description": "Get daily reward status"
+					}
+				},
+				{
+					"name": "Claim Daily Reward",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/rewards/daily/claim",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "rewards", "daily", "claim"]
+						},
+						"description": "Claim daily reward"
+					}
+				},
+				{
+					"name": "Get Streak Count",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/rewards/streak",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "rewards", "streak"]
+						},
+						"description": "Get user's daily reward streak count"
+					}
+				}
+			]
+		},
+		{
+			"name": "Tournaments",
+			"item": [
+				{
+					"name": "Get All Tournaments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/tournaments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "tournaments"]
+						},
+						"description": "Get all tournaments"
+					}
+				},
+				{
+					"name": "Get Tournament by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/tournaments/{{tournamentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "tournaments", "{{tournamentId}}"]
+						},
+						"description": "Get tournament details by ID"
+					}
+				},
+				{
+					"name": "Create Tournament",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Tournament\",\n    \"description\": \"Tournament Description\",\n    \"startTime\": \"2024-03-20T10:00:00Z\",\n    \"endTime\": \"2024-03-21T10:00:00Z\",\n    \"entryFee\": 100,\n    \"prizePool\": 1000\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/tournaments",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "tournaments"]
+						},
+						"description": "Create new tournament"
+					}
+				},
+				{
+					"name": "Join Tournament",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{userId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/tournaments/{{tournamentId}}/join",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "tournaments", "{{tournamentId}}", "join"]
+						},
+						"description": "Join a tournament"
+					}
+				}
+			]
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Get User Transactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/transactions",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "transactions"]
+						},
+						"description": "Get current user's transactions"
+					}
+				},
+				{
+					"name": "Get Transactions by User (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/transactions/{{userId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "transactions", "{{userId}}"]
+						},
+						"description": "Get transactions for specific user (Admin only)"
+					}
+				},
+				{
+					"name": "Add Transaction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{userId}}\",\n    \"amount\": 100,\n    \"type\": \"win\",\n    \"note\": \"Game win\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/transactions",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "transactions"]
+						},
+						"description": "Add a new transaction"
+					}
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get All Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications"]
+						},
+						"description": "Get all active notifications for the current user"
+					}
+				},
+				{
+					"name": "Get Notifications by Type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications/{{notificationType}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications", "{{notificationType}}"]
+						},
+						"description": "Get notifications by specific type (e.g., session, general)"
+					}
+				},
+				{
+					"name": "Get Latest Notification by Type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications/{{notificationType}}/latest",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications", "{{notificationType}}", "latest"]
+						},
+						"description": "Get the latest notification of a specific type"
+					}
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications/{{notificationId}}/mark-read",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications", "{{notificationId}}", "mark-read"]
+						},
+						"description": "Mark a specific notification as read"
+					}
+				},
+				{
+					"name": "Create Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Test Notification\",\n    \"message\": \"This is a test notification\",\n    \"notificationType\": \"general\",\n    \"expiresAt\": \"2024-12-31T23:59:59Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "notifications"]
+						},
+						"description": "Create a new notification for the current user"
+					}
+				},
+				{
+					"name": "Get Active Session Logs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/session-logs/active",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "session-logs", "active"]
+						},
+						"description": "Get all active session logs for the current user (for Unity client)"
+					}
+				},
+				{
+					"name": "Mark All Session Logs as Read",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/session-logs/mark-all-read",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "session-logs", "mark-all-read"]
+						},
+						"description": "Mark all active session logs as read (for Unity client)"
+					}
+				},
+				{
+					"name": "Get Session Logs by Action",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/session-logs/{{action}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "session-logs", "{{action}}"]
+						},
+						"description": "Get session logs by specific action (e.g., new_device_login, logout, expired)"
+					}
+				}
+			]
+		},
+		{
+			"name": "Favorites",
+			"item": [
+				{
+					"name": "Add to Favorites",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{userId}}\",\n    \"gameId\": \"{{gameId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/favorites/add",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "favorites", "add"]
+						},
+						"description": "Add a game to favorites"
+					}
+				},
+				{
+					"name": "Remove from Favorites",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{userId}}\",\n    \"gameId\": \"{{gameId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/favorites/remove",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "favorites", "remove"]
+						},
+						"description": "Remove a game from favorites"
+					}
+				},
+				{
+					"name": "Set Game Favorite (Alternative)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "true"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/game-progress/{{gameId}}/favorite",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "game-progress", "{{gameId}}", "favorite"]
+						},
+						"description": "Set game as favorite using game-progress endpoint"
+					}
+				},
+				{
+					"name": "Remove Game Favorite (Alternative)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "false"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/game-progress/{{gameId}}/favorite",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "game-progress", "{{gameId}}", "favorite"]
+						},
+						"description": "Remove game from favorites using game-progress endpoint"
+					}
+				}
+			]
+		},
+		{
+			"name": "Config",
+			"item": [
+				{
+					"name": "Get Main Menu Config",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/config/main-menu",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "config", "main-menu"]
+						},
+						"description": "Get main menu configuration"
+					}
+				}
+			]
+		},
+		{
+			"name": "Login Notifications",
+			"item": [
+				{
+					"name": "Get Active Login Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/login-notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "login-notifications"]
+						},
+						"description": "Get active login notifications for the current user"
+					}
+				},
+				{
+					"name": "Get All Login Notifications (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/login-notifications/all",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "login-notifications", "all"]
+						},
+						"description": "Get all active login notifications (Admin only - shows notifications for all users)"
+					}
+				},
+				{
+					"name": "Get Login Notification by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/login-notifications/{{loginNotificationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "login-notifications", "{{loginNotificationId}}"]
+						},
+						"description": "Get a specific login notification by ID"
+					}
+				},
+				{
+					"name": "Create Login Notification (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Welcome Back!\",\n    \"message\": \"We're glad to see you again. Check out our new features!\",\n    \"targetUsers\": [\"user-uuid-here\", \"another-user-uuid\"],\n    \"showOnce\": false,\n    \"expiresAt\": \"2024-12-31T23:59:59Z\",\n    \"type\": \"test image\",\n    \"targetType\": \"singleuser\",\n    \"imageUrl\": \"https://example.com/welcome-image.jpg\",\n    \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/login-notifications",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "login-notifications"]
+						},
+						"description": "Create a new login notification (Admin only)"
+					}
+				},
+				{
+					"name": "Update Login Notification (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Welcome Message\",\n    \"message\": \"This is an updated welcome message for all users.\",\n    \"targetUsers\": [],\n    \"showOnce\": true,\n    \"expiresAt\": \"2024-12-31T23:59:59Z\",\n    \"type\": \"test image\",\n    \"targetType\": \"admin\",\n    \"imageUrl\": \"https://example.com/updated-image.jpg\",\n    \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/login-notifications/{{loginNotificationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "login-notifications", "{{loginNotificationId}}"]
+						},
+						"description": "Update an existing login notification (Admin only)"
+					}
+				},
+				{
+					"name": "Delete Login Notification (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/login-notifications/{{loginNotificationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "login-notifications", "{{loginNotificationId}}"]
+						},
+						"description": "Delete a login notification (Admin only)"
+					}
+				},
+				{
+					"name": "Update ShowOnce Status (Admin)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"showOnce\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/login-notifications/{{loginNotificationId}}/show-once",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "login-notifications", "{{loginNotificationId}}", "show-once"]
+						},
+						"description": "Update only the ShowOnce status of a login notification (Admin only)"
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Auto-extract token from login/register responses",
+					"if (pm.response.code === 200) {",
+					"    const response = pm.response.json();",
+					"    if (response.token) {",
+					"        pm.collectionVariables.set('token', response.token);",
+					"        console.log('Token extracted and saved:', response.token.substring(0, 20) + '...');",
+					"    }",
+					"    ",
+					"    // Extract user ID if available",
+					"    if (response.user && response.user.id) {",
+					"        pm.collectionVariables.set('userId', response.user.id);",
+					"        console.log('User ID extracted:', response.user.id);",
+					"    }",
+					"    ",
+					"    // Log session information if available",
+					"    if (response.session_message) {",
+					"        console.log('Session message:', response.session_message);",
+					"    }",
+					"    if (response.is_new_session) {",
+					"        console.log('New session created - previous device logged out');",
+					"    }",
+					"}",
+					"",
+					"// Auto-extract notification ID from notification responses",
+					"if (pm.response.code === 200 && pm.request.url.path.includes('notifications')) {",
+					"    const response = pm.response.json();",
+					"    if (response.id) {",
+					"        pm.collectionVariables.set('notificationId', response.id);",
+					"        console.log('Notification ID extracted:', response.id);",
+					"    }",
+					"}",
+					"",
+					"// Auto-extract login notification ID from login notification responses",
+					"if (pm.response.code === 200 && pm.request.url.path.includes('login-notifications')) {",
+					"    const response = pm.response.json();",
+					"    if (response.data && response.data.id) {",
+					"        pm.collectionVariables.set('loginNotificationId', response.data.id);",
+					"        console.log('Login Notification ID extracted:', response.data.id);",
+					"    }",
+					"    if (response.data && Array.isArray(response.data) && response.data.length > 0) {",
+					"        pm.collectionVariables.set('loginNotificationId', response.data[0].id);",
+					"        console.log('First Login Notification ID extracted:', response.data[0].id);",
+					"    }",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5036",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your-jwt-token-here",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "user-uuid-here",
+			"type": "string"
+		},
+		{
+			"key": "gameId",
+			"value": "game-uuid-here",
+			"type": "string"
+		},
+		{
+			"key": "eventId",
+			"value": "event-uuid-here",
+			"type": "string"
+		},
+		{
+			"key": "tournamentId",
+			"value": "tournament-uuid-here",
+			"type": "string"
+		},
+		{
+			"key": "action",
+			"value": "new_device_login",
+			"type": "string"
+		},
+		{
+			"key": "sessionId",
+			"value": "session-uuid-here",
+			"type": "string"
+		},
+		{
+			"key": "notificationId",
+			"value": "notification-uuid-here",
+			"type": "string"
+		},
+		{
+			"key": "notificationType",
+			"value": "session",
+			"type": "string"
+		},
+		{
+			"key": "achievementId",
+			"value": "achievement-uuid-here",
+			"type": "string"
+		},
+		{
+			"key": "testWinRatio",
+			"value": "0.7",
+			"type": "string"
+		},
+		{
+			"key": "testBetAmount",
+			"value": "100",
+			"type": "string"
+		},
+		{
+			"key": "testNumSpins",
+			"value": "100",
+			"type": "string"
+		},
+		{
+			"key": "simulationRecordId",
+			"value": "simulation-record-uuid-here",
+			"type": "string"
+		},
+		{
+			"key": "weekStartDate",
+			"value": "2024-01-01",
+			"type": "string"
+		},
+		{
+			"key": "loginNotificationId",
+			"value": "login-notification-uuid-here",
+			"type": "string"
+		}
+	]
+}
