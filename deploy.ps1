@@ -77,7 +77,7 @@ Write-Host "Starting deployment to AWS server..." -ForegroundColor Green
 # Build the .NET application first
 Write-Host "Building .NET application..." -ForegroundColor Yellow
 $projectPath = "D:\GameBackend\Cursor\CasinoBackend\CasinoBackend"
-$buildOutput = "D:\GameBackend\Server Data\Publish Build\Build"
+$buildOutput = "D:\GameBackend\Server Data\Mega_Vault_Publish_Build_AWS_Server\Build"
 
 # Clean and create build directory
 if (Test-Path $buildOutput) {
